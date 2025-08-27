@@ -26,7 +26,7 @@ const Chat = () => {
       id: Date.now(),
       content: message,
       sender: "user",
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     }
 
     dispatch(addMessage(newMessage))
@@ -38,7 +38,7 @@ const Chat = () => {
         id: Date.now() + 1,
         content: "This is a simulated AI response. In the actual implementation, this would come from your API.",
         sender: "ai",
-        timestamp: new Date(),
+        timestamp: new Date().toISOString(),
       }
       dispatch(addMessage(aiResponse))
       dispatch(setLoading(false))
@@ -50,7 +50,7 @@ const Chat = () => {
       id: Date.now(),
       title: "New Chat",
       lastMessage: "",
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     }
     dispatch(addConversation(newConversation))
     dispatch(selectConversation(newConversation.id))

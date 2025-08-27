@@ -86,7 +86,7 @@ ConversationSidebar.propTypes = {
       id: PropTypes.number.isRequired,
       title: PropTypes.string.isRequired,
       lastMessage: PropTypes.string.isRequired,
-      timestamp: PropTypes.instanceOf(Date).isRequired,
+      timestamp: PropTypes.string.isRequired,
     })
   ).isRequired,
   selectedConversation: PropTypes.number,
