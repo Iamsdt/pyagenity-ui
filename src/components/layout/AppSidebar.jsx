@@ -1,4 +1,4 @@
-import { Home } from "lucide-react"
+import { Home, MessageCircle } from "lucide-react"
 
 import {
   Sidebar,
@@ -17,6 +17,11 @@ const items = [
     title: "Home",
     url: "/",
     icon: Home,
+  },
+  {
+    title: "Chat",
+    url: "/chat",
+    icon: MessageCircle,
   },
 ]
 
