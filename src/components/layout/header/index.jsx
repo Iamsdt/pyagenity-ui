@@ -1,4 +1,4 @@
-import ModeToggle from "@/components/layout/header/ThemeSwitch"
+import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler"
 
 import LanguageNav from "./LanguageNav"
 import UserNav from "./UserNav"
@@ -16,7 +16,7 @@ const Navbar = () => {
         </div> */}
         <div className="flex gap-x-5 flex-1 items-center space-x-2 justify-end">
           <LanguageNav />
-          <ModeToggle />
+          <AnimatedThemeToggler className="rounded-full w-8 h-8 bg-background border border-input hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center" />
           <UserNav />
         </div>
       </div>

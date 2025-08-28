@@ -1,48 +1,16 @@
-import { Home } from "lucide-react"
-
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar"
-
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: Home,
-  },
-]
+import ThreadList from "@/components/chat/ThreadList"
+import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar"
 
 /**
- * AppSidebar component renders a collapsible sidebar with application navigation.
+ * AppSidebar component renders a collapsible sidebar with application navigation and chat threads.
  */
 const AppSidebar = () => {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="offcanvas">
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
+        {/* Chat Threads - only show thread list */}
+        <SidebarGroup className="flex-1">
+          <ThreadList className="h-full" />
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>

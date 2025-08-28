@@ -1,11 +1,11 @@
 import { Outlet } from "react-router-dom"
 
 import ModeToggle from "@/components/layout/header/ThemeSwitch"
+import { SparklesText } from "@/components/magicui/sparkles-text"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toaster"
 
 import AppSidebar from "./AppSidebar"
-import LanguageNav from "./header/LanguageNav"
 import UserNav from "./header/UserNav"
 
 /**
@@ -19,9 +19,11 @@ const MainLayout = () => {
         <div className="sticky top-0 z-50 w-full dark:shadow-secondary flex items-center justify-between p-4 bg-white dark:bg-[#020817] border-b dark:border-slate-800">
           <div className="flex items-center gap-4">
             <SidebarTrigger />
+            <SparklesText className="text-lg">
+              PyAgenity Playground
+            </SparklesText>
           </div>
           <div className="flex items-center gap-2 ml-auto">
-            <LanguageNav />
             <ModeToggle />
             <UserNav />
           </div>
