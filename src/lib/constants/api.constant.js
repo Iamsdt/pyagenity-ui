@@ -1,6 +1,3 @@
-const apiConstant = {
-  comment: {
-    comment: "comments/",
-  },
-}
+const apiConstant = {}
+
 export default apiConstant

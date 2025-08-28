@@ -1,10 +1,3 @@
-import Login from "@/pages/auth"
-
-const blankRoutes = [
-  {
-    path: "/login",
-    element: <Login />,
-  },
-]
+const blankRoutes = []
 
 export default blankRoutes

@@ -1,5 +1,3 @@
-import commentHandler from "./comments"
-
-const handlers = [...commentHandler]
+const handlers = []
 
 export default handlers

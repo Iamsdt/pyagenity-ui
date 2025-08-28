@@ -1,6 +1,5 @@
 {
-    "aboutTitle": "About Page Hello",
-    "todoUser": "User",
-    "todoPostedBy" : "Posted By",
-    "todoComments": "Comments"
+  "aboutTitle": "About Page Hello",
+  "todoUser": "User",
+  "todoPostedBy": "Posted By"
 }

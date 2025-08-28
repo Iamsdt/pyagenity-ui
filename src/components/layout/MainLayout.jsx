@@ -1,11 +1,8 @@
-import { useEffect } from "react"
-import { useSelector } from "react-redux"
-import { Outlet, useNavigate } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 import ModeToggle from "@/components/layout/header/ThemeSwitch"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toaster"
-import ct from "@constants/"
 
 import AppSidebar from "./AppSidebar"
 import LanguageNav from "./header/LanguageNav"
@@ -15,18 +12,6 @@ import UserNav from "./header/UserNav"
  * MainLayout component renders the main application layout with sidebar, header, and content area.
  */
 const MainLayout = () => {
-  const store = useSelector((st) => st[ct.store.USER_STORE])
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    if (store.isAuthenticated) {
-      return
-    }
-    // route to login page
-    navigate(`/${ct.route.auth.LOGIN}`, { replace: true })
-    navigate(`/${ct.route.auth.LOGIN}`, { replace: true })
-  }, [store, navigate])
-
   return (
     <SidebarProvider>
       <AppSidebar />

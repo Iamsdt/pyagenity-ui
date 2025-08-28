@@ -18,14 +18,12 @@
     }
   ],
   "scenarios": [
-   
     {
-      "label": "Login-Page",
-      "url": "http://localhost:5173/login",
+      "label": "Dashboard-Page",
+      "url": "http://localhost:5173/",
       "selectors": ["document"],
       "delay": 500,
-      "misMatchThreshold": 0.1,
-         "onReadyScript": "backstop_data/engine_scripts/login_page/loginPageReady.js"
+      "misMatchThreshold": 0.1
     }
   ],
   "paths": {
