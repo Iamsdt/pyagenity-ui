@@ -1,9 +1,9 @@
-/* eslint-disable no-undef */
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Settings } from "lucide-react"
 import PropTypes from "prop-types"
 import React, { useEffect } from "react"
 import { useForm } from "react-hook-form"
+import { useSelector, useDispatch } from "react-redux"
 import { z } from "zod"
 
 import { Button } from "@/components/ui/button"
@@ -17,8 +17,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-
-const SETTINGS_STORAGE_KEY = "pyagenity-settings"
+import {
+  selectSettings,
+  setSettings,
+} from "@/services/store/slices/settings.slice"
 
 // Zod validation schema
 const settingsSchema = z.object({
@@ -34,54 +36,12 @@ const settingsSchema = z.object({
 })
 
 /**
- * Load settings from localStorage
- * @returns {object} Settings object with name, backendUrl, and authToken
- */
-const loadSettingsFromStorage = () => {
-  if (typeof window === "undefined") {
-    return { name: "", backendUrl: "", authToken: "" }
-  }
-
-  const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY)
-  if (savedSettings) {
-    try {
-      const parsed = JSON.parse(savedSettings)
-      return {
-        name: parsed.name || "",
-        backendUrl: parsed.backendUrl || "",
-        authToken: parsed.authToken || "",
-      }
-    } catch (error) {
-      console.error("Failed to parse saved settings:", error)
-    }
-  }
-  return {
-    name: "",
-    backendUrl: "",
-    authToken: "",
-  }
-}
-
-/**
- * Save settings to localStorage
- * @param {object} settings - Settings object to save
- */
-const saveSettingsToStorage = (settings) => {
-  if (typeof window === "undefined") {
-    return
-  }
-
-  try {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
-  } catch (error) {
-    console.error("Failed to save settings:", error)
-  }
-}
-
-/**
  * Custom hook for managing settings form
  */
 const useSettingsForm = (isOpen, onClose) => {
+  const dispatch = useDispatch()
+  const currentSettings = useSelector(selectSettings)
+  
   const form = useForm({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
@@ -93,26 +53,24 @@ const useSettingsForm = (isOpen, onClose) => {
 
   const { setValue, reset } = form
 
-  // Load settings from localStorage when component mounts or when isOpen changes
+  // Load settings from Redux when component mounts or when isOpen changes
   useEffect(() => {
     if (isOpen) {
-      const savedSettings = loadSettingsFromStorage()
-      setValue("name", savedSettings.name)
-      setValue("backendUrl", savedSettings.backendUrl)
-      setValue("authToken", savedSettings.authToken)
-      reset(savedSettings)
+      setValue("name", currentSettings.name)
+      setValue("backendUrl", currentSettings.backendUrl)
+      setValue("authToken", currentSettings.authToken)
+      reset(currentSettings)
     }
-  }, [isOpen, setValue, reset])
+  }, [isOpen, setValue, reset, currentSettings])
 
   const onSubmit = (data) => {
-    saveSettingsToStorage(data)
+    dispatch(setSettings(data))
     onClose()
   }
 
   const handleCancel = () => {
-    // Reset form to saved values
-    const savedSettings = loadSettingsFromStorage()
-    reset(savedSettings)
+    // Reset form to current Redux state
+    reset(currentSettings)
     onClose()
   }
 

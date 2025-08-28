@@ -1,6 +1,6 @@
+import { Eye, Database, GitGraph, History } from "lucide-react"
 import { useState } from "react"
 import { Outlet } from "react-router-dom"
-import { Eye, Database, GitGraph, History } from "lucide-react"
 
 import ModeToggle from "@/components/layout/header/ThemeSwitch"
 import { SparklesText } from "@/components/magicui/sparkles-text"
@@ -10,7 +10,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 
 import AppSidebar from "./AppSidebar"
 import DevelopmentToolButton from "./DevelopmentToolButton"
-import UserNav from "./header/UserNav"
 import EventsHistorySheet from "./sheets/EventsHistorySheet"
 import ViewGraphSheet from "./sheets/ViewGraphSheet"
 import ViewMemorySheet from "./sheets/ViewMemorySheet"
@@ -80,20 +79,20 @@ const MainLayout = () => {
           {/* Development Tool Sheets */}
           <ViewStateSheet
             isOpen={activeSheet === "state"}
-            handleClose={handleSheetClose}
+            onClose={handleSheetClose}
             activeSheet={activeSheet}
           />
           <ViewMemorySheet
             isOpen={activeSheet === "memory"}
-            handleClose={handleSheetClose}
+            onClose={handleSheetClose}
           />
           <ViewGraphSheet
             isOpen={activeSheet === "graph"}
-            handleClose={handleSheetClose}
+            onClose={handleSheetClose}
           />
           <EventsHistorySheet
             isOpen={activeSheet === "history"}
-            handleClose={handleSheetClose}
+            onClose={handleSheetClose}
           />
         </main>
       </SidebarProvider>

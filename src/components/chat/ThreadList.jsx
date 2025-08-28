@@ -133,7 +133,7 @@ const ThreadList = ({ className }) => {
         </Button>
       </div>
 
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
         <div className="p-2 space-y-1">
           {sortedThreads.length === 0 ? (
             <div className="text-center text-muted-foreground p-8">
