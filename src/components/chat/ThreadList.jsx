@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { cn } from "@/lib/utils"
 import {
   createThread,
   deleteThread,
@@ -119,8 +120,8 @@ const ThreadList = ({ className }) => {
   }
 
   return (
-    <div className={className}>
-      <div className="flex items-center justify-between p-2">
+    <div className={cn("flex flex-col h-full", className)}>
+      <div className="flex items-center justify-between p-2 flex-shrink-0">
         <h2 className="text-lg font-semibold">Chats</h2>
         <Button
           variant="ghost"
@@ -133,7 +134,7 @@ const ThreadList = ({ className }) => {
         </Button>
       </div>
 
-      <ScrollArea className="flex-1 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+      <ScrollArea className="flex-1 min-h-0">
         <div className="p-2 space-y-1">
           {sortedThreads.length === 0 ? (
             <div className="text-center text-muted-foreground p-8">

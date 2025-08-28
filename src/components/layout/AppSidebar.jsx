@@ -7,9 +7,9 @@ import { Sidebar, SidebarContent, SidebarGroup } from "@/components/ui/sidebar"
 const AppSidebar = () => {
   return (
     <Sidebar collapsible="offcanvas">
-      <SidebarContent>
+      <SidebarContent className="overflow-hidden">
         {/* Chat Threads - only show thread list */}
-        <SidebarGroup className="flex-1">
+        <SidebarGroup className="flex-1 p-0 min-h-0">
           <ThreadList className="h-full" />
         </SidebarGroup>
       </SidebarContent>
