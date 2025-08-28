@@ -1,10 +1,19 @@
-import { Eye, Database, GitGraph, History, Settings } from "lucide-react"
+/* eslint-disable max-lines-per-function */
+import {
+  Eye,
+  Database,
+  GitGraph,
+  History,
+  Settings,
+  Github,
+} from "lucide-react"
 import { useState, useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
 import { Outlet } from "react-router-dom"
 
 import ModeToggle from "@/components/layout/header/ThemeSwitch"
 import { SparklesText } from "@/components/magicui/sparkles-text"
+import { Separator } from "@/components/ui/separator"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -37,9 +46,9 @@ const MainLayout = () => {
   }, [dispatch])
 
   const handleSheetOpen = (sheetType) => {
-    // Check if dev tools require backend configuration
+    // Check if dev tools require backend configuration (graph doesn't need backend)
     if (
-      ["state", "memory", "graph", "history"].includes(sheetType) &&
+      ["state", "memory", "history"].includes(sheetType) &&
       !backendConfigured
     ) {
       return // Don't open development sheets if backend not configured
@@ -83,7 +92,7 @@ const MainLayout = () => {
                 tooltip="View Graph"
                 handleActivate={() => handleSheetOpen("graph")}
                 isActive={activeSheet === "graph"}
-                disabled={!backendConfigured}
+                disabled={false}
               />
               <DevelopmentToolButton
                 icon={History}
@@ -92,6 +101,7 @@ const MainLayout = () => {
                 isActive={activeSheet === "history"}
                 disabled={!backendConfigured}
               />
+              <Separator orientation="vertical" className="h-6" />
               <DevelopmentToolButton
                 icon={Settings}
                 tooltip="Settings"
@@ -100,6 +110,20 @@ const MainLayout = () => {
                 disabled={false}
               />
               <ModeToggle />
+              <Separator orientation="vertical" className="h-6" />
+              <div className="flex text-sm text-gray-500 dark:text-gray-400">
+                <Github />{" "}
+                <span className="ml-1">
+                  <a
+                    href="https://github.com/Iamsdt/PyAgenity"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline"
+                  >
+                    PyAgenity
+                  </a>
+                </span>
+              </div>
             </div>
           </div>
           <div className="p-6">
