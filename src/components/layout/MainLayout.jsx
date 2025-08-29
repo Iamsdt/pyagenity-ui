@@ -1,6 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable max-lines-per-function */
 import {
   Eye,
   Database,
@@ -9,10 +6,10 @@ import {
   Settings,
   Github,
 } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useSelector, useDispatch } from "react-redux"
+import { useState } from "react"
+import { useSelector } from "react-redux"
 import { Outlet } from "react-router-dom"
-
+import { ReactQueryDevtools } from "@/lib/devtools"
 import ModeToggle from "@/components/layout/header/ThemeSwitch"
 import { SparklesText } from "@/components/magicui/sparkles-text"
 import { Separator } from "@/components/ui/separator"
@@ -147,6 +144,7 @@ const MainLayout = () => {
           />
           <Toaster />
         </main>
+        <ReactQueryDevtools position="bottom" buttonPosition="bottom-left" />
       </SidebarProvider>
     </TooltipProvider>
   )
