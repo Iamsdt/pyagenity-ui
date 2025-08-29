@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Settings } from "lucide-react"
+import { Settings, CheckCircle } from "lucide-react"
 import PropTypes from "prop-types"
 import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -172,6 +172,12 @@ const SettingsSheet = ({ isOpen, onClose }) => {
           <SheetTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
             Agent Settings
+            {verification?.isVerified && (
+              <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-sm font-medium">Ready to use</span>
+              </div>
+            )}
           </SheetTitle>
           <SheetDescription>Configure your agent</SheetDescription>
         </SheetHeader>

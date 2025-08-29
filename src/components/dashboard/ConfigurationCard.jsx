@@ -1,7 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MessageCircle, Settings } from "lucide-react"
+import { MessageCircle, Settings, CheckCircle } from "lucide-react"
 import PropTypes from "prop-types"
-import React, { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
@@ -100,6 +99,16 @@ const ConfigurationCard = ({ onStartChat = null }) => {
         <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">
           Agent Configuration
         </h3>
+        {verification.isVerified ? (
+          <div className="flex items-center gap-1 text-green-600 dark:text-green-400">
+            <CheckCircle className="h-4 w-4" />
+            <span className="text-sm font-medium">Ready to use</span>
+          </div>
+        ) : (
+          <span className="text-sm text-slate-500 dark:text-slate-400">
+            (Not Verified)
+          </span>
+        )}
       </div>
       <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
         Set up Agent and its backend connection to get started
