@@ -16,12 +16,12 @@ const EmptyChatView = ({ onNewChat }) => (
         just chat!
       </p>
     </div>
-    
+
     <div className="space-y-4 w-full">
       <Button onClick={onNewChat} size="lg" className="w-full">
         Start New Conversation
       </Button>
-      
+
       <div className="grid grid-cols-1 gap-3 text-left">
         <div className="p-4 rounded-lg border hover:bg-accent cursor-pointer transition-colors">
           <h3 className="font-medium mb-1">💡 Get help with coding</h3>

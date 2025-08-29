@@ -17,9 +17,9 @@
 //   const dispatch = useDispatch()
 //   const navigate = useNavigate()
 //   const { threadId } = useParams()
-  
+
 //   const { threads } = useSelector((state) => state[ct.store.CHAT_STORE])
-  
+
 //   // Find the active thread
 //   const activeThread = threadId ? threads.find((t) => t.id === threadId) : null
 

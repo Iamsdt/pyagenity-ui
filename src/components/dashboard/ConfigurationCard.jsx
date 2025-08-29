@@ -12,9 +12,12 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
-  selectSettings,
   setSettings,
-} from "@/services/store/slices/settings.slice"
+  testPingEndpoint,
+  testGraphEndpoint,
+} from "@store/slices/settings.slice"
+import ct from "@constants"
+import { toast } from "../ui/use-toast"
 
 // Zod validation schema
 const settingsSchema = z.object({
@@ -30,73 +33,65 @@ const settingsSchema = z.object({
 })
 
 /**
- * Custom hook for managing dashboard configuration form
- */
-const useConfigurationForm = (onStartChat) => {
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const currentSettings = useSelector(selectSettings)
-  
-  const form = useForm({
-    resolver: zodResolver(settingsSchema),
-    defaultValues: {
-      name: "",
-      backendUrl: "",
-      authToken: "",
-    },
-  })
-
-  const { setValue, reset, watch } = form
-  const backendUrl = watch("backendUrl")
-  const name = watch("name")
-  const isReadyToChat = backendUrl && name
-
-  // Load settings from Redux when component mounts
-  useEffect(() => {
-    setValue("name", currentSettings.name)
-    setValue("backendUrl", currentSettings.backendUrl)
-    setValue("authToken", currentSettings.authToken)
-    reset(currentSettings)
-  }, [setValue, reset, currentSettings])
-
-  const handleFormSubmit = (data) => {
-    dispatch(setSettings(data))
-    if (onStartChat) {
-      onStartChat(data)
-    }
-  }
-
-  const handleStartChat = () => {
-    const currentValues = watch()
-    if (currentValues.name && currentValues.backendUrl) {
-      dispatch(setSettings(currentValues))
-      navigate("/chat")
-    }
-  }
-
-  return {
-    ...form,
-    isReadyToChat,
-    handleFormSubmit,
-    handleStartChat,
-  }
-}
-
-/**
  * ConfigurationCard component for dashboard setup
  * @param {object} props - Component props
  * @param {Function} props.onStartChat - Callback when Start Chat is clicked
  * @returns {object} Card component with configuration form
  */
 const ConfigurationCard = ({ onStartChat = null }) => {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const store = useSelector((st) => st[ct.store.SETTINGS_STORE])
+
+  const { verification, name, backendUrl, authToken } = store
+  const { isVerified } = verification
+
+  const form = useForm({
+    resolver: zodResolver(settingsSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: name || "",
+      backendUrl: backendUrl || "",
+      authToken: authToken || "",
+    },
+  })
+
+  const handleFormSubmit = (data) => {
+    console.log("#SDT Form Data:", data)
+    dispatch(setSettings(data))
+    // first dispatch ping
+    dispatch(
+      testPingEndpoint({
+        backendUrl: data.backendUrl,
+        authToken: data.authToken,
+      })
+    )
+    // second dispatch graph
+    dispatch(
+      testGraphEndpoint({
+        backendUrl: data.backendUrl,
+        authToken: data.authToken,
+      })
+    )
+    // here
+    if (onStartChat) {
+      onStartChat(data)
+    }
+  }
+
+  const handleStartChat = () => {
+    if (isVerified) {
+      navigate("/chat")
+    } else {
+      toast("Please setup and verify your agent configuration")
+    }
+  }
+
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    isReadyToChat,
-    handleFormSubmit,
-    handleStartChat,
-  } = useConfigurationForm(onStartChat)
+    formState: { errors, isValid },
+  } = form
 
   return (
     <Card className="bg-white dark:bg-slate-900 shadow rounded-xl p-6 ">
@@ -170,12 +165,22 @@ const ConfigurationCard = ({ onStartChat = null }) => {
           <Button
             type="button"
             onClick={handleStartChat}
-            disabled={!isReadyToChat}
+            disabled={!isVerified}
             size="sm"
             className="flex-1"
           >
             <MessageCircle className="h-4 w-4 mr-2" />
             Start Chat
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSubmit(handleFormSubmit)}
+            disabled={!isValid}
+            size="sm"
+            className="flex-1"
+          >
+            <Settings className="h-4 w-4 mr-2" />
+            Save and Verify
           </Button>
         </div>
       </form>

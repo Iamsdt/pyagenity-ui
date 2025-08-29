@@ -1,11 +1,13 @@
+/* eslint-disable max-lines-per-function */
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Settings } from "lucide-react"
 import PropTypes from "prop-types"
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useSelector, useDispatch } from "react-redux"
 import { z } from "zod"
 
+import VerificationStepper from "@/components/setup/VerificationStepper"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,10 +19,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
+import { useToast } from "@/components/ui/use-toast"
+import ct from "@constants"
 import {
-  selectSettings,
+  saveAndVerifySettings,
+  setPingStepResult,
+  setGraphStepResult,
+  resetVerification,
   setSettings,
+  testPingEndpoint,
+  testGraphEndpoint,
 } from "@/services/store/slices/settings.slice"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 // Zod validation schema
 const settingsSchema = z.object({
@@ -36,143 +46,227 @@ const settingsSchema = z.object({
 })
 
 /**
- * Custom hook for managing settings form
+ * Custom hook for managing settings form with verification
  */
 const useSettingsForm = (isOpen, onClose) => {
   const dispatch = useDispatch()
-  const currentSettings = useSelector(selectSettings)
-  
+  const { toast } = useToast()
+
+  const store = useSelector((st) => st[ct.store.SETTINGS_STORE])
+  const { verification, name, backendUrl, authToken } = store || {}
+  const [showStepper, setShowStepper] = useState(false)
+
   const form = useForm({
     resolver: zodResolver(settingsSchema),
     defaultValues: {
-      name: "",
-      backendUrl: "",
-      authToken: "",
+      name: name || "",
+      backendUrl: backendUrl || "",
+      authToken: authToken || "",
     },
   })
 
-  const { setValue, reset } = form
+  const { reset, watch } = form
 
-  // Load settings from Redux when component mounts or when isOpen changes
+  // Load current settings into form when sheet opens
   useEffect(() => {
-    if (isOpen) {
-      setValue("name", currentSettings.name)
-      setValue("backendUrl", currentSettings.backendUrl)
-      setValue("authToken", currentSettings.authToken)
-      reset(currentSettings)
+    if (isOpen && store) {
+      reset({
+        name: store.name || "",
+        backendUrl: store.backendUrl || "",
+        authToken: store.authToken || "",
+      })
     }
-  }, [isOpen, setValue, reset, currentSettings])
+  }, [isOpen, store, reset])
 
-  const onSubmit = (data) => {
+  // Handle form submission with verification
+  const onSubmit = async (data) => {
+    if (!data.backendUrl || !data.name) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide both backend URL and agent name",
+        variant: "destructive",
+      })
+      return
+    }
+
+    // Show stepper and start verification
+    setShowStepper(true)
     dispatch(setSettings(data))
-    onClose()
+
+    // Dispatch ping endpoint test
+    dispatch(
+      testPingEndpoint({
+        backendUrl: data.backendUrl,
+        authToken: data.authToken,
+      })
+    )
+
+    // Dispatch graph endpoint test
+    dispatch(
+      testGraphEndpoint({
+        backendUrl: data.backendUrl,
+        authToken: data.authToken,
+      })
+    )
   }
 
   const handleCancel = () => {
-    // Reset form to current Redux state
-    reset(currentSettings)
+    form.reset()
+    setShowStepper(false)
+    dispatch(resetVerification())
     onClose()
+  }
+
+  const handleRetryVerification = () => {
+    dispatch(resetVerification())
+    const currentValues = watch()
+    dispatch(setSettings(currentValues))
+
+    // Re-dispatch the async thunks
+    dispatch(
+      testPingEndpoint({
+        backendUrl: currentValues.backendUrl,
+        authToken: currentValues.authToken,
+      })
+    )
+    dispatch(
+      testGraphEndpoint({
+        backendUrl: currentValues.backendUrl,
+        authToken: currentValues.authToken,
+      })
+    )
   }
 
   return {
     ...form,
     onSubmit,
     handleCancel,
+    handleRetryVerification,
+    verification,
+    showStepper,
   }
 }
 
 /**
- * SettingsSheet component displays application settings form
- * @param {object} props - Component props
- * @param {boolean} props.isOpen - Whether the sheet is open
- * @param {Function} props.onClose - Function to close the sheet
- * @returns {object} Sheet component displaying settings form
+ * SettingsSheet component displays application settings form with verification
  */
 const SettingsSheet = ({ isOpen, onClose }) => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors },
     onSubmit,
     handleCancel,
+    handleRetryVerification,
+    verification,
+    showStepper,
   } = useSettingsForm(isOpen, onClose)
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && handleCancel()}>
-      <SheetContent side="right" className="w-[400px] sm:w-[540px]">
-        <SheetHeader>
+    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <SheetContent
+        side="right"
+        className="w-[400px] sm:w-[540px] flex flex-col h-full"
+      >
+        <SheetHeader className="flex-shrink-0">
           <SheetTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
             Agent Settings
           </SheetTitle>
           <SheetDescription>Configure your agent</SheetDescription>
         </SheetHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-6 space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Agent Name</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="Agent name"
-                {...register("name")}
-                className="w-full"
-              />
-              {errors.name && (
-                <p className="text-sm text-red-500">{errors.name.message}</p>
-              )}
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Enter your display name
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="backend-url">Backend URL</Label>
-              <Input
-                id="backend-url"
-                type="url"
-                placeholder="https://api.example.com"
-                {...register("backendUrl")}
-                className="w-full"
-              />
-              {errors.backendUrl && (
-                <p className="text-sm text-red-500">
-                  {errors.backendUrl.message}
+
+        <ScrollArea className="flex-1 pr-4">
+          <div className="space-y-6 pb-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Agent Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Agent name"
+                  {...register("name")}
+                  className="w-full"
+                />
+                {errors.name && (
+                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                )}
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Enter your display name
                 </p>
-              )}
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Enter the base URL for your backend API
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="auth-token">
-                Authentication Token (Optional)
-              </Label>
-              <Input
-                id="auth-token"
-                type="password"
-                placeholder="Bearer token or API key"
-                {...register("authToken")}
-                className="w-full"
-              />
-              {errors.authToken && (
-                <p className="text-sm text-red-500">
-                  {errors.authToken.message}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="backend-url">Backend URL</Label>
+                <Input
+                  id="backend-url"
+                  type="url"
+                  placeholder="https://api.example.com"
+                  {...register("backendUrl")}
+                  className="w-full"
+                />
+                {errors.backendUrl && (
+                  <p className="text-sm text-red-500">
+                    {errors.backendUrl.message}
+                  </p>
+                )}
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Enter the base URL for your backend API
                 </p>
-              )}
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Enter your API authentication token (if required)
-              </p>
-            </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="auth-token">
+                  Authentication Token (Optional)
+                </Label>
+                <Input
+                  id="auth-token"
+                  type="password"
+                  placeholder="Bearer token or API key"
+                  {...register("authToken")}
+                  className="w-full"
+                />
+                {errors.authToken && (
+                  <p className="text-sm text-red-500">
+                    {errors.authToken.message}
+                  </p>
+                )}
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Enter your API authentication token (if required)
+                </p>
+              </div>
+
+              <SheetFooter className="flex gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={handleCancel}>
+                  Cancel
+                </Button>
+                <Button type="submit">Verify & Save</Button>
+              </SheetFooter>
+            </form>
+
+            {/* Verification Stepper */}
+            {showStepper && (
+              <div className="pt-4">
+                <VerificationStepper
+                  isVisible={showStepper}
+                  pingStep={{
+                    status: verification.pingStep.status,
+                    errorMessage: verification.pingStep.errorMessage,
+                  }}
+                  graphStep={{
+                    status: verification.graphStep.status,
+                    errorMessage: verification.graphStep.errorMessage,
+                  }}
+                  isVerifying={verification.isVerifying}
+                  onRetry={handleRetryVerification}
+                  onComplete={() => {}}
+                  canRetry
+                  showCompleteButton={false}
+                />
+              </div>
+            )}
           </div>
-          <SheetFooter className="mt-8">
-            <Button type="button" variant="outline" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isDirty} className="ml-2">
-              Save Settings
-            </Button>
-          </SheetFooter>
-        </form>
+        </ScrollArea>
       </SheetContent>
     </Sheet>
   )

@@ -1,91 +1,127 @@
-/* eslint-disable no-undef */
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-const SETTINGS_STORAGE_KEY = "pyagenity-settings"
+import { pingBackend, fetchGraphData } from "@api/setupIntegration.api"
+import ct from "@constants/"
+
+// Async thunks for API testing
+export const testPingEndpoint = createAsyncThunk(
+  "settings/testPingEndpoint",
+  async ({ backendUrl, authToken }, { rejectWithValue }) => {
+    try {
+      const result = await pingBackend(backendUrl, authToken)
+      return result
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const testGraphEndpoint = createAsyncThunk(
+  "settings/testGraphEndpoint",
+  async ({ backendUrl, authToken }, { rejectWithValue }) => {
+    try {
+      const result = await fetchGraphData(backendUrl, authToken)
+      return result
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
 
 const initialState = {
-    name: "",
-    backendUrl: "",
-    authToken: "",
-    isBackendConfigured: false,
+  name: "",
+  backendUrl: "",
+  authToken: "",
+  isBackendConfigured: false,
+  graphData: null,
+  verification: {
+    isVerifying: false,
+    isVerified: false,
+    pingStep: {
+      status: "pending",
+      errorMessage: "",
+    },
+    graphStep: {
+      status: "pending",
+      errorMessage: "",
+    },
+    lastVerificationTime: null,
+  },
 }
 
 const settingsSlice = createSlice({
-    name: "settings",
-    initialState,
-    reducers: {
-        setSettings: (state, action) => {
-            const { name, backendUrl, authToken } = action.payload
-            state.name = name || ""
-            state.backendUrl = backendUrl || ""
-            state.authToken = authToken || ""
-            state.isBackendConfigured = Boolean(
-                backendUrl && backendUrl.trim() !== ""
-            )
-
-            // Also save to localStorage for persistence
-            if (typeof window !== "undefined") {
-                try {
-                    localStorage.setItem(
-                        SETTINGS_STORAGE_KEY,
-                        JSON.stringify({
-                            name: state.name,
-                            backendUrl: state.backendUrl,
-                            authToken: state.authToken,
-                        })
-                    )
-                    // Dispatch custom event for any other listeners
-                    window.dispatchEvent(new CustomEvent("settingsUpdated"))
-                } catch (error) {
-                    console.error("Failed to save settings to localStorage:", error)
-                }
-            }
-        },
-        loadSettingsFromStorage: (state) => {
-            if (typeof window !== "undefined") {
-                try {
-                    const savedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY)
-                    if (savedSettings) {
-                        const parsed = JSON.parse(savedSettings)
-                        state.name = parsed.name || ""
-                        state.backendUrl = parsed.backendUrl || ""
-                        state.authToken = parsed.authToken || ""
-                        state.isBackendConfigured = Boolean(
-                            parsed.backendUrl && parsed.backendUrl.trim() !== ""
-                        )
-                    }
-                } catch (error) {
-                    console.error("Failed to load settings from localStorage:", error)
-                }
-            }
-        },
-        clearSettings: (state) => {
-            state.name = ""
-            state.backendUrl = ""
-            state.authToken = ""
-            state.isBackendConfigured = false
-
-            if (typeof window !== "undefined") {
-                try {
-                    localStorage.removeItem(SETTINGS_STORAGE_KEY)
-                    window.dispatchEvent(new CustomEvent("settingsUpdated"))
-                } catch (error) {
-                    console.error("Failed to clear settings from localStorage:", error)
-                }
-            }
-        },
+  name: ct.store.SETTINGS_STORE,
+  initialState,
+  reducers: {
+    setSettings: (state, action) => {
+      const { name, backendUrl, authToken } = action.payload
+      state.name = name || ""
+      state.backendUrl = backendUrl || ""
+      state.authToken = authToken || ""
+      state.isBackendConfigured = false
     },
+    clearSettings: (state) => {
+      state.name = ""
+      state.backendUrl = ""
+      state.authToken = ""
+      state.isBackendConfigured = false
+    },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Ping endpoint async thunk
+      .addCase(testPingEndpoint.pending, (state) => {
+        if (!state.verification) {
+          state.verification = initialState.verification
+        }
+        state.verification.isVerifying = true
+        state.verification.pingStep.status = "loading"
+        state.verification.pingStep.errorMessage = ""
+      })
+      .addCase(testPingEndpoint.fulfilled, (state, _) => {
+        state.verification.pingStep.status = "success"
+        state.verification.pingStep.errorMessage = ""
+      })
+      .addCase(testPingEndpoint.rejected, (state, action) => {
+        state.verification.isVerifying = false
+        state.verification.pingStep.status = "error"
+        state.verification.pingStep.errorMessage =
+          action.payload || "Ping failed"
+      })
+      // Graph endpoint async thunk
+      .addCase(testGraphEndpoint.pending, (state) => {
+        state.verification.graphStep.status = "loading"
+        state.verification.graphStep.errorMessage = ""
+      })
+      .addCase(testGraphEndpoint.fulfilled, (state, action) => {
+        state.verification.isVerifying = false
+        state.verification.graphStep.status = "success"
+        state.verification.graphStep.errorMessage = ""
+        // also save the data in the state
+        state.graphData = action.payload.data.data
+        state.verification.isVerified =
+          state.verification.pingStep.status === "success"
+        state.verification.lastVerificationTime = new Date().toISOString()
+      })
+      .addCase(testGraphEndpoint.rejected, (state, action) => {
+        state.verification.isVerifying = false
+        state.verification.graphStep.status = "error"
+        state.verification.graphStep.errorMessage =
+          action.payload || "Graph fetch failed"
+        state.graphData = null
+        state.verification.isVerified = false
+      })
+  },
 })
 
-export const { setSettings, loadSettingsFromStorage, clearSettings } =
-    settingsSlice.actions
-
-// Selectors
-export const selectSettings = (state) => state.settingsStore
-export const selectIsBackendConfigured = (state) =>
-    state.settingsStore.isBackendConfigured
-export const selectBackendUrl = (state) => state.settingsStore.backendUrl
-export const selectName = (state) => state.settingsStore.name
-export const selectAuthToken = (state) => state.settingsStore.authToken
+export const {
+  setSettings,
+  clearSettings,
+  startVerification,
+  setPingStepResult,
+  setGraphStepResult,
+  resetVerification,
+  saveAndVerifySettings,
+} = settingsSlice.actions
 
 export default settingsSlice.reducer

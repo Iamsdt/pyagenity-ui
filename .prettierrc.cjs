@@ -5,6 +5,5 @@ module.exports = {
   printWidth: 80, // Or your preferred line length
   tabWidth: 2,
   bracketSpacing: true,
-  jsxBracketSameLine: false, // Or true, depending on your preference
   arrowParens: "always", // Or 'as-needed'
 }

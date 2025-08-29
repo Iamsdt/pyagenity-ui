@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable max-lines-per-function */
 import {
   Eye,
@@ -17,10 +19,7 @@ import { Separator } from "@/components/ui/separator"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/toaster"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import {
-  selectIsBackendConfigured,
-  loadSettingsFromStorage,
-} from "@/services/store/slices/settings.slice"
+import ct from "@constants"
 
 import AppSidebar from "./AppSidebar"
 import DevelopmentToolButton from "./DevelopmentToolButton"
@@ -37,22 +36,11 @@ import ViewStateSheet from "./sheets/ViewStateSheet"
  */
 const MainLayout = () => {
   const [activeSheet, setActiveSheet] = useState(null)
-  const dispatch = useDispatch()
-  const backendConfigured = useSelector(selectIsBackendConfigured)
+  const store = useSelector((st) => st[ct.store.SETTINGS_STORE])
 
-  // Load settings from localStorage on mount
-  useEffect(() => {
-    dispatch(loadSettingsFromStorage())
-  }, [dispatch])
+  const { isVerified } = store.verification
 
   const handleSheetOpen = (sheetType) => {
-    // Check if dev tools require backend configuration (graph doesn't need backend)
-    if (
-      ["state", "memory", "history"].includes(sheetType) &&
-      !backendConfigured
-    ) {
-      return // Don't open development sheets if backend not configured
-    }
     setActiveSheet(sheetType)
   }
 
@@ -68,9 +56,17 @@ const MainLayout = () => {
           <div className="sticky top-0 z-50 w-full dark:shadow-secondary flex items-center justify-between p-4 bg-white dark:bg-[#020817] border-b dark:border-slate-800">
             <div className="flex items-center gap-4">
               <SidebarTrigger />
-              <SparklesText className="text-lg">
-                PyAgenity Playground
-              </SparklesText>
+              <span
+                className="cursor-pointer"
+                onClick={() => (window.location.pathname = "/")}
+                tabIndex={0}
+                role="button"
+                aria-label="Go to home page"
+              >
+                <SparklesText className="text-lg">
+                  PyAgenity Playground
+                </SparklesText>
+              </span>
             </div>
             <div className="flex items-center gap-2 ml-auto">
               <DevelopmentToolButton
@@ -78,28 +74,28 @@ const MainLayout = () => {
                 tooltip="View State"
                 handleActivate={() => handleSheetOpen("state")}
                 isActive={activeSheet === "state"}
-                disabled={!backendConfigured}
+                disabled={!isVerified}
               />
               <DevelopmentToolButton
                 icon={Database}
                 tooltip="View Memory"
                 handleActivate={() => handleSheetOpen("memory")}
                 isActive={activeSheet === "memory"}
-                disabled={!backendConfigured}
+                disabled={!isVerified}
               />
               <DevelopmentToolButton
                 icon={GitGraph}
                 tooltip="View Graph"
                 handleActivate={() => handleSheetOpen("graph")}
                 isActive={activeSheet === "graph"}
-                disabled={false}
+                disabled={!isVerified}
               />
               <DevelopmentToolButton
                 icon={History}
                 tooltip="Events History"
                 handleActivate={() => handleSheetOpen("history")}
                 isActive={activeSheet === "history"}
-                disabled={!backendConfigured}
+                disabled={!isVerified}
               />
               <Separator orientation="vertical" className="h-6" />
               <DevelopmentToolButton

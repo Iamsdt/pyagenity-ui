@@ -1,0 +1,2059 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "pyagenity-api",
+    "summary": "Backend Base",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/v1/graph/invoke": {
+      "post": {
+        "tags": ["Graph"],
+        "summary": "Invoke graph execution",
+        "description": "Execute the graph with the provided input and return the final result",
+        "operationId": "invoke_graph_v1_graph_invoke_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GraphInputSchema" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_GraphInvokeOutputSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/v1/graph/stream": {
+      "post": {
+        "tags": ["Graph"],
+        "summary": "Stream graph execution",
+        "description": "Execute the graph with streaming output for real-time results",
+        "operationId": "stream_graph_v1_graph_stream_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GraphInputSchema" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_GraphStreamChunkSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/v1/graph": {
+      "get": {
+        "tags": ["Graph"],
+        "summary": "Invoke graph execution",
+        "description": "Execute the graph with the provided input and return the final result",
+        "operationId": "graph_details_v1_graph_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_GraphSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
+    "/v1/threads/{thread_id}/state": {
+      "get": {
+        "tags": ["checkpointer"],
+        "summary": "Get state from checkpointer",
+        "description": "Retrieve state data from the checkpointer using configuration.",
+        "operationId": "get_state_v1_threads__thread_id__state_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "string" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_StateResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["checkpointer"],
+        "summary": "Put state to checkpointer",
+        "description": "Store state data in the checkpointer using configuration.",
+        "operationId": "put_state_v1_threads__thread_id__state_put",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutStateSchema" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_StateResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["checkpointer"],
+        "summary": "Clear state from checkpointer",
+        "description": "Clear state data from the checkpointer using configuration.",
+        "operationId": "clear_state_v1_threads__thread_id__state_delete",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "string" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/threads/{thread_id}/messages": {
+      "post": {
+        "tags": ["checkpointer"],
+        "summary": "Put messages to checkpointer",
+        "description": "Store messages in the checkpointer using configuration.",
+        "operationId": "put_messages_v1_threads__thread_id__messages_post",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PutMessagesSchema" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["checkpointer"],
+        "summary": "List messages from checkpointer",
+        "description": "Retrieve a list of messages from the checkpointer using configuration and optional filters.",
+        "operationId": "list_messages_v1_threads__thread_id__messages_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "string" }],
+              "title": "Thread Id"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_MessagesListResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/threads/{thread_id}/messages/{message_id}": {
+      "get": {
+        "tags": ["checkpointer"],
+        "summary": "Get message from checkpointer",
+        "description": "Retrieve a specific message from the checkpointer using configuration and message ID.",
+        "operationId": "get_message_v1_threads__thread_id__messages__message_id__get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          },
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Message Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_Message_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["checkpointer"],
+        "summary": "Delete message from checkpointer",
+        "description": "Delete a specific message from the checkpointer using configuration and ID.",
+        "operationId": "delete_message_v1_threads__thread_id__messages__message_id__delete",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "message_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Message Id"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConfigInputSchema" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/threads/{thread_id}": {
+      "get": {
+        "tags": ["checkpointer"],
+        "summary": "Get thread from checkpointer",
+        "description": "Retrieve a specific thread from the checkpointer using configuration.",
+        "operationId": "get_thread_v1_threads__thread_id__get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ThreadResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["checkpointer"],
+        "summary": "Delete thread from checkpointer",
+        "description": "Delete a specific thread from the checkpointer using configuration and thread ID.",
+        "operationId": "delete_thread_v1_threads__thread_id__delete",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "integer" }],
+              "title": "Thread Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConfigInputSchema" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/threads": {
+      "get": {
+        "tags": ["checkpointer"],
+        "summary": "List threads from checkpointer",
+        "description": "Retrieve a list of threads from the checkpointer with optional filters.",
+        "operationId": "list_threads_v1_threads_get",
+        "security": [{ "HTTPBearer": [] }],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "string" }, { "type": "null" }],
+              "title": "Search"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "title": "Offset"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [{ "type": "integer" }, { "type": "null" }],
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_ThreadsListResponseSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentState-Input": {
+        "properties": {
+          "context": {
+            "items": { "$ref": "#/components/schemas/Message" },
+            "type": "array",
+            "title": "Context"
+          },
+          "context_summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Context Summary"
+          },
+          "execution_meta": { "$ref": "#/components/schemas/ExecutionState" }
+        },
+        "type": "object",
+        "title": "AgentState",
+        "description": "Common state schema that includes messages, context and internal execution metadata.\n\nThis class can be subclassed to add application-specific fields while maintaining\ncompatibility with the PyAgenity framework. All internal execution metadata\nis preserved through subclassing.\n\nNotes:\n- `execution_meta` contains internal-only execution progress and interrupt info.\n- Users may subclass `AgentState` to add application fields; internal exec meta remains\n  available to the runtime and will be persisted with the state.\n- When subclassing, add your fields but keep the core fields intact.\n\nExample:\n    class MyCustomState(AgentState):\n        user_data: dict = Field(default_factory=dict)\n        custom_field: str = \"default\""
+      },
+      "AgentState-Output": {
+        "properties": {
+          "context": {
+            "items": { "$ref": "#/components/schemas/Message" },
+            "type": "array",
+            "title": "Context"
+          },
+          "context_summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Context Summary"
+          },
+          "execution_meta": { "$ref": "#/components/schemas/ExecutionState" }
+        },
+        "type": "object",
+        "title": "AgentState",
+        "description": "Common state schema that includes messages, context and internal execution metadata.\n\nThis class can be subclassed to add application-specific fields while maintaining\ncompatibility with the PyAgenity framework. All internal execution metadata\nis preserved through subclassing.\n\nNotes:\n- `execution_meta` contains internal-only execution progress and interrupt info.\n- Users may subclass `AgentState` to add application fields; internal exec meta remains\n  available to the runtime and will be persisted with the state.\n- When subclassing, add your fields but keep the core fields intact.\n\nExample:\n    class MyCustomState(AgentState):\n        user_data: dict = Field(default_factory=dict)\n        custom_field: str = \"default\""
+      },
+      "ConfigInputSchema": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config",
+            "description": "Configuration for the state"
+          }
+        },
+        "type": "object",
+        "required": ["config"],
+        "title": "ConfigInputSchema",
+        "description": "Schema for state data."
+      },
+      "EdgeSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier for the edge"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Source node identifier"
+          },
+          "target": {
+            "type": "string",
+            "title": "Target",
+            "description": "Target node identifier"
+          }
+        },
+        "type": "object",
+        "required": ["id", "source", "target"],
+        "title": "EdgeSchema",
+        "description": "Schema for individual graph edges."
+      },
+      "ErrorOutputSchema": {
+        "properties": {
+          "code": { "type": "string", "title": "Error code" },
+          "message": { "type": "string", "title": "Error message" },
+          "details": {
+            "items": { "$ref": "#/components/schemas/ErrorSchemas" },
+            "type": "array",
+            "title": "Error details",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": ["code", "message"],
+        "title": "ErrorOutputSchema"
+      },
+      "ErrorSchemas": {
+        "properties": {
+          "loc": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Error message" },
+          "type": { "type": "string", "title": "Error type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ErrorSchemas"
+      },
+      "ExecutionState": {
+        "properties": {
+          "current_node": { "type": "string", "title": "Current Node" },
+          "step": { "type": "integer", "title": "Step", "default": 0 },
+          "status": {
+            "$ref": "#/components/schemas/ExecutionStatus",
+            "default": "running"
+          },
+          "interrupted_node": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Interrupted Node"
+          },
+          "interrupt_reason": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Interrupt Reason"
+          },
+          "interrupt_data": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Interrupt Data"
+          },
+          "thread_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Thread Id"
+          },
+          "internal_data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Internal Data"
+          }
+        },
+        "type": "object",
+        "required": ["current_node"],
+        "title": "ExecutionState",
+        "description": "Tracks the internal execution state of a graph.\n\nThis class manages the execution progress, interrupt status, and internal\ndata that should not be exposed to users."
+      },
+      "ExecutionStatus": {
+        "type": "string",
+        "enum": [
+          "running",
+          "interrupted_before",
+          "interrupted_after",
+          "completed",
+          "error"
+        ],
+        "title": "ExecutionStatus",
+        "description": "Status of graph execution."
+      },
+      "GraphInfoSchema": {
+        "properties": {
+          "node_count": {
+            "type": "integer",
+            "title": "Node Count",
+            "description": "Number of nodes in the graph"
+          },
+          "edge_count": {
+            "type": "integer",
+            "title": "Edge Count",
+            "description": "Number of edges in the graph"
+          },
+          "checkpointer": {
+            "type": "boolean",
+            "title": "Checkpointer",
+            "description": "Whether checkpointer is enabled"
+          },
+          "checkpointer_type": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Checkpointer Type",
+            "description": "Type of checkpointer if enabled"
+          },
+          "publisher": {
+            "type": "boolean",
+            "title": "Publisher",
+            "description": "Whether publisher is enabled"
+          },
+          "store": {
+            "type": "boolean",
+            "title": "Store",
+            "description": "Whether store is enabled"
+          },
+          "interrupt_before": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Interrupt Before",
+            "description": "Nodes to interrupt before"
+          },
+          "interrupt_after": {
+            "anyOf": [
+              { "items": { "type": "string" }, "type": "array" },
+              { "type": "null" }
+            ],
+            "title": "Interrupt After",
+            "description": "Nodes to interrupt after"
+          }
+        },
+        "type": "object",
+        "required": [
+          "node_count",
+          "edge_count",
+          "checkpointer",
+          "publisher",
+          "store"
+        ],
+        "title": "GraphInfoSchema",
+        "description": "Schema for graph metadata and configuration."
+      },
+      "GraphInputSchema": {
+        "properties": {
+          "messages": {
+            "items": { "$ref": "#/components/schemas/MessageSchema" },
+            "type": "array",
+            "title": "Messages",
+            "description": "List of messages to process through the graph"
+          },
+          "initial_state": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Initial State",
+            "description": "Initial state for the graph execution"
+          },
+          "config": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Config",
+            "description": "Optional configuration for graph execution"
+          },
+          "recursion_limit": {
+            "type": "integer",
+            "title": "Recursion Limit",
+            "description": "Maximum recursion limit for graph execution",
+            "default": 25
+          },
+          "response_granularity": {
+            "$ref": "#/components/schemas/ResponseGranularity",
+            "description": "Granularity of the response (full, partial, low)",
+            "default": "low"
+          },
+          "include_raw": {
+            "type": "boolean",
+            "title": "Include Raw",
+            "description": "Whether to include raw response data",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "GraphInputSchema",
+        "description": "Schema for graph input including messages and configuration."
+      },
+      "GraphInvokeOutputSchema": {
+        "properties": {
+          "messages": {
+            "items": { "$ref": "#/components/schemas/Message" },
+            "type": "array",
+            "title": "Messages",
+            "description": "Final processed messages from the graph"
+          },
+          "state": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AgentState-Output" },
+              { "type": "null" }
+            ],
+            "description": "State information from the graph execution"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Message" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Context",
+            "description": "Context information from the graph execution"
+          },
+          "summary": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Summary",
+            "description": "Summary information from the graph execution"
+          },
+          "meta": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Meta",
+            "description": "Meta information from the graph execution"
+          }
+        },
+        "type": "object",
+        "required": ["messages"],
+        "title": "GraphInvokeOutputSchema",
+        "description": "Schema for graph invoke output."
+      },
+      "GraphSchema": {
+        "properties": {
+          "info": {
+            "$ref": "#/components/schemas/GraphInfoSchema",
+            "description": "Graph metadata and configuration"
+          },
+          "nodes": {
+            "items": { "$ref": "#/components/schemas/NodeSchema" },
+            "type": "array",
+            "title": "Nodes",
+            "description": "List of nodes in the graph"
+          },
+          "edges": {
+            "items": { "$ref": "#/components/schemas/EdgeSchema" },
+            "type": "array",
+            "title": "Edges",
+            "description": "List of edges in the graph"
+          }
+        },
+        "type": "object",
+        "required": ["info", "nodes", "edges"],
+        "title": "GraphSchema",
+        "description": "Schema for the complete graph structure."
+      },
+      "GraphStreamChunkSchema": {
+        "properties": {
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data",
+            "description": "Chunk data"
+          },
+          "metadata": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Metadata",
+            "description": "Chunk metadata"
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "GraphStreamChunkSchema",
+        "description": "Schema for individual stream chunks from graph execution."
+      },
+      "Message": {
+        "properties": {
+          "message_id": { "type": "string", "title": "Message Id" },
+          "role": {
+            "type": "string",
+            "enum": ["user", "assistant", "system", "tool"],
+            "title": "Role"
+          },
+          "content": { "type": "string", "title": "Content" },
+          "tools_calls": {
+            "anyOf": [
+              {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Tools Calls"
+          },
+          "tool_call_id": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Tool Call Id"
+          },
+          "function_call": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Function Call"
+          },
+          "reasoning": {
+            "anyOf": [{ "type": "string" }, { "type": "null" }],
+            "title": "Reasoning"
+          },
+          "timestamp": {
+            "anyOf": [
+              { "type": "string", "format": "date-time" },
+              { "type": "null" }
+            ],
+            "title": "Timestamp"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata"
+          },
+          "usages": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/TokenUsages" },
+              { "type": "null" }
+            ]
+          },
+          "raw": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Raw"
+          }
+        },
+        "type": "object",
+        "required": ["message_id", "role", "content"],
+        "title": "Message",
+        "description": "Represents a message in a conversation, including content, role, metadata, and token usage.\n\nExample:\n    >>> msg = Message(message_id=\"abc123\", role=\"user\", content=\"Hello!\")\n    {'message_id': 'abc123', 'role': 'user', 'content': 'Hello!', ...}\n\nAttributes:\n    message_id (str): Unique identifier for the message.\n    role (Literal[\"user\", \"assistant\", \"system\", \"tool\"]): The role of the message sender.\n    content (str): The message content.\n    tools_calls (list[dict[str, Any]] | None): Tool call information, if any.\n    tool_call_id (str | None): Tool call identifier, if any.\n    function_call (dict[str, Any] | None): Function call information, if any.\n    reasoning (str | None): Reasoning or explanation, if any.\n    timestamp (datetime | None): Timestamp of the message.\n    metadata (dict[str, Any]): Additional metadata.\n    usages (TokenUsages | None): Token usage statistics.\n    raw (dict[str, Any] | None): Raw data, if any."
+      },
+      "MessageSchema": {
+        "properties": {
+          "message_id": {
+            "anyOf": [{ "type": "integer" }, { "type": "null" }],
+            "title": "Message Id",
+            "description": "Unique identifier for the message"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role",
+            "description": "Role of the message sender (user, assistant, etc.)",
+            "default": "user"
+          },
+          "content": {
+            "type": "string",
+            "title": "Content",
+            "description": "Content of the message"
+          }
+        },
+        "type": "object",
+        "required": ["content"],
+        "title": "MessageSchema"
+      },
+      "MessagesListResponseSchema": {
+        "properties": {
+          "messages": {
+            "anyOf": [
+              {
+                "items": { "$ref": "#/components/schemas/Message" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Messages",
+            "description": "List of messages"
+          }
+        },
+        "type": "object",
+        "title": "MessagesListResponseSchema",
+        "description": "Response schema for message list operations."
+      },
+      "NodeSchema": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id",
+            "description": "Unique identifier for the node"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "Name of the node"
+          }
+        },
+        "type": "object",
+        "required": ["id", "name"],
+        "title": "NodeSchema",
+        "description": "Schema for individual graph nodes."
+      },
+      "PutMessagesSchema": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config",
+            "description": "Configuration for the messages"
+          },
+          "messages": {
+            "items": { "$ref": "#/components/schemas/Message" },
+            "type": "array",
+            "title": "Messages",
+            "description": "List of messages to store"
+          },
+          "metadata": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Metadata",
+            "description": "Optional metadata"
+          }
+        },
+        "type": "object",
+        "required": ["config", "messages"],
+        "title": "PutMessagesSchema",
+        "description": "Schema for putting messages."
+      },
+      "PutStateSchema": {
+        "properties": {
+          "config": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Config",
+            "description": "Configuration for the state"
+          },
+          "state": {
+            "$ref": "#/components/schemas/AgentState-Input",
+            "description": "State data"
+          }
+        },
+        "type": "object",
+        "required": ["config", "state"],
+        "title": "PutStateSchema",
+        "description": "Schema for putting state."
+      },
+      "ResponseGranularity": {
+        "type": "string",
+        "enum": ["full", "partial", "low"],
+        "title": "ResponseGranularity"
+      },
+      "ResponseSchema": {
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "title": "Success",
+            "description": "Whether the operation was successful"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message",
+            "description": "Response message"
+          },
+          "data": {
+            "anyOf": [{}, { "type": "null" }],
+            "title": "Data",
+            "description": "Response data"
+          }
+        },
+        "type": "object",
+        "required": ["success", "message"],
+        "title": "ResponseSchema",
+        "description": "Base response schema for checkpointer operations."
+      },
+      "StateResponseSchema": {
+        "properties": {
+          "state": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AgentState-Output" },
+              { "type": "null" }
+            ],
+            "description": "State data"
+          }
+        },
+        "type": "object",
+        "title": "StateResponseSchema",
+        "description": "Schema for state response."
+      },
+      "ThreadResponseSchema": {
+        "properties": {
+          "thread": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Thread",
+            "description": "Thread data"
+          }
+        },
+        "type": "object",
+        "title": "ThreadResponseSchema",
+        "description": "Response schema for thread operations."
+      },
+      "ThreadsListResponseSchema": {
+        "properties": {
+          "threads": {
+            "anyOf": [
+              {
+                "items": { "additionalProperties": true, "type": "object" },
+                "type": "array"
+              },
+              { "type": "null" }
+            ],
+            "title": "Threads",
+            "description": "List of threads"
+          }
+        },
+        "type": "object",
+        "title": "ThreadsListResponseSchema",
+        "description": "Response schema for thread list operations."
+      },
+      "TokenUsages": {
+        "properties": {
+          "completion_tokens": {
+            "type": "integer",
+            "title": "Completion Tokens"
+          },
+          "prompt_tokens": { "type": "integer", "title": "Prompt Tokens" },
+          "total_tokens": { "type": "integer", "title": "Total Tokens" },
+          "reasoning_tokens": {
+            "type": "integer",
+            "title": "Reasoning Tokens",
+            "default": 0
+          },
+          "cache_creation_input_tokens": {
+            "type": "integer",
+            "title": "Cache Creation Input Tokens",
+            "default": 0
+          },
+          "cache_read_input_tokens": {
+            "type": "integer",
+            "title": "Cache Read Input Tokens",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": ["completion_tokens", "prompt_tokens", "total_tokens"],
+        "title": "TokenUsages",
+        "description": "Tracks token usage statistics for a message or model response.\n\nExample:\n    >>> usage = TokenUsages(completion_tokens=10, prompt_tokens=20, total_tokens=30)\n    {'completion_tokens': 10, 'prompt_tokens': 20, 'total_tokens': 30, ...}"
+      },
+      "_SwaggerError400Schemas": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Failed",
+              "request_id": "9dbd6c28199e406599382c4ae95be01e",
+              "timestamp": "2025-08-28T23:35:55.645832"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorOutputSchema",
+            "default": {
+              "code": "BAD_REQUEST",
+              "message": "Invalid input, please check the input data for any errors",
+              "details": []
+            }
+          }
+        },
+        "type": "object",
+        "title": "_SwaggerError400Schemas"
+      },
+      "_SwaggerError401Schemas": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Failed",
+              "request_id": "2ddf05af5f654282b1cce71eeb043e1a",
+              "timestamp": "2025-08-28T23:35:55.646412"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorOutputSchema",
+            "default": {
+              "code": "AUTHENTICATION_FAILED",
+              "message": "Please provide valid credentials",
+              "details": []
+            }
+          }
+        },
+        "type": "object",
+        "title": "_SwaggerError401Schemas"
+      },
+      "_SwaggerError403Schemas": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Failed",
+              "request_id": "b7b9c548fcd14e7797c424919b8111d5",
+              "timestamp": "2025-08-28T23:35:55.646690"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorOutputSchema",
+            "default": {
+              "code": "PERMISSION_ERROR",
+              "message": "You don't have permission to access this resource",
+              "details": []
+            }
+          }
+        },
+        "type": "object",
+        "title": "_SwaggerError403Schemas"
+      },
+      "_SwaggerError404Schemas": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Failed",
+              "request_id": "5c7c24a3adb948e39a1bf17136b3d164",
+              "timestamp": "2025-08-28T23:35:55.646121"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorOutputSchema",
+            "default": {
+              "code": "RESOURCE_NOT_FOUND",
+              "message": "Resource not found",
+              "details": []
+            }
+          }
+        },
+        "type": "object",
+        "title": "_SwaggerError404Schemas"
+      },
+      "_SwaggerError426Schemas": {
+        "properties": {
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Failed",
+              "request_id": "ff97cba369a44bb8b203e126f9a2a2b9",
+              "timestamp": "2025-08-28T23:35:55.647099"
+            }
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorOutputSchema",
+            "default": {
+              "code": "VALIDATION_ERROR",
+              "message": "Invalid input",
+              "details": [
+                {
+                  "loc": ["body", "name"],
+                  "msg": "field required",
+                  "type": "value_error.missing"
+                }
+              ]
+            }
+          }
+        },
+        "type": "object",
+        "title": "_SwaggerError426Schemas"
+      },
+      "_SwaggerSuccessSchemas_GraphInvokeOutputSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/GraphInvokeOutputSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[GraphInvokeOutputSchema]"
+      },
+      "_SwaggerSuccessSchemas_GraphSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/GraphSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[GraphSchema]"
+      },
+      "_SwaggerSuccessSchemas_GraphStreamChunkSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/GraphStreamChunkSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[GraphStreamChunkSchema]"
+      },
+      "_SwaggerSuccessSchemas_Message_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/Message" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[Message]"
+      },
+      "_SwaggerSuccessSchemas_MessagesListResponseSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/MessagesListResponseSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[MessagesListResponseSchema]"
+      },
+      "_SwaggerSuccessSchemas_ResponseSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ResponseSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[ResponseSchema]"
+      },
+      "_SwaggerSuccessSchemas_StateResponseSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/StateResponseSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[StateResponseSchema]"
+      },
+      "_SwaggerSuccessSchemas_ThreadResponseSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ThreadResponseSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[ThreadResponseSchema]"
+      },
+      "_SwaggerSuccessSchemas_ThreadsListResponseSchema_": {
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ThreadsListResponseSchema" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
+              "timestamp": "2025-08-28T23:35:55.645227"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[ThreadsListResponseSchema]"
+      }
+    },
+    "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
+  }
+}
