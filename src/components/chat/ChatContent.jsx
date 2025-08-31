@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useNavigate, useParams } from "react-router-dom"
 
-import { createThread } from "@/services/store/slices/chat.slice"
+import { createThread, addMessage } from "@/services/store/slices/chat.slice"
 import ct from "@constants/"
 
 import EmptyChatView from "./EmptyChatView"
@@ -26,12 +26,56 @@ const ChatContent = () => {
     navigate(`/chat/${newThread.payload.id || Date.now().toString()}`)
   }, [dispatch, navigate])
 
+  const handleSendMessage = useCallback(
+    (message) => {
+      // If no active thread, create a new one
+      if (!activeThread) {
+        const newThread = dispatch(
+          createThread({ title: message.slice(0, 50) + "..." })
+        )
+        const threadId = newThread.payload.id || Date.now().toString()
+
+        // Add the message to the new thread
+        dispatch(
+          addMessage({
+            threadId,
+            message: {
+              id: Date.now().toString(),
+              content: message,
+              role: "user",
+              timestamp: new Date().toISOString(),
+            },
+          })
+        )
+
+        navigate(`/chat/${threadId}`)
+      } else {
+        // Add message to existing thread
+        dispatch(
+          addMessage({
+            threadId: activeThread.id,
+            message: {
+              id: Date.now().toString(),
+              content: message,
+              role: "user",
+              timestamp: new Date().toISOString(),
+            },
+          })
+        )
+      }
+    },
+    [dispatch, navigate, activeThread]
+  )
+
   return (
     <div className="flex flex-col h-full">
       {activeThread ? (
         <MessageView thread={activeThread} />
       ) : (
-        <EmptyChatView onNewChat={handleNewChat} />
+        <EmptyChatView
+          onNewChat={handleNewChat}
+          onSendMessage={handleSendMessage}
+        />
       )}
     </div>
   )
