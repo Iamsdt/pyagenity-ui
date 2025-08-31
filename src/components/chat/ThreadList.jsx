@@ -19,6 +19,11 @@ import {
   setActiveThread,
 } from "@/services/store/slices/chat.slice"
 import ct from "@constants/"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // Helper function to format dates
 const formatDate = (dateString) => {
@@ -92,6 +97,8 @@ const ThreadList = ({ className }) => {
     (state) => state[ct.store.CHAT_STORE]
   )
 
+  const storeSettings = useSelector((state) => state[ct.store.SETTINGS_STORE])
+
   // Sort threads by updatedAt in descending order
   const sortedThreads = useMemo(() => {
     return [...threads].sort(
@@ -119,14 +126,24 @@ const ThreadList = ({ className }) => {
     }
   }
 
+  const navigateToChat = () => {
+    // check we are not in the chat page
+    if (window.location.pathname !== "/chat") {
+      navigate("/chat")
+    }
+  }
+
   return (
     <div className={cn("flex flex-col h-full", className)}>
       <div className="flex items-center justify-between p-2 flex-shrink-0">
-        <h2 className="text-lg font-semibold">Chats</h2>
+        <h2 className="text-lg font-semibold ml-2" onClick={navigateToChat}>
+          Chats
+        </h2>
         <Button
           variant="ghost"
           size="icon"
-          onClick={handleNewChat}
+          onClick={storeSettings.verification.isVerified ? handleNewChat : null}
+          disabled={!storeSettings.verification.isVerified}
           className="h-8 w-8"
           aria-label="New chat"
         >

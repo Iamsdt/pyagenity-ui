@@ -34,6 +34,13 @@ const DashboardUI = () => {
           >
             PyAgenity Playground
           </AnimatedGradientText>
+          <div className="text-xs text-muted-foreground">
+            PyAgenity is a Python framework for building, orchestrating, and
+            managing multi-agent systems. Designed for flexibility and
+            scalability, PyAgenity enables developers to create intelligent
+            agents that collaborate, communicate, and solve complex tasks
+            together.
+          </div>
 
           {/* <TypingAnimation
             className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed"
