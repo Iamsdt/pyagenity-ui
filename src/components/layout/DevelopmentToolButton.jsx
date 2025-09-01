@@ -23,6 +23,7 @@ const DevelopmentToolButton = ({
   handleActivate,
   isActive,
   disabled = false,
+  text = "",
 }) => {
   const handleClick = disabled ? undefined : handleActivate
 
@@ -41,7 +42,7 @@ const DevelopmentToolButton = ({
           } ${isActive && !disabled ? "bg-slate-100 dark:bg-slate-800" : ""}`}
           aria-label={tooltip}
         >
-          <Icon className="h-4 w-4" />
+          {text} <Icon className="h-4 w-4" />
         </Button>
       </TooltipTrigger>
       <TooltipContent>
@@ -57,10 +58,12 @@ DevelopmentToolButton.propTypes = {
   handleActivate: PropTypes.func.isRequired,
   isActive: PropTypes.bool.isRequired,
   disabled: PropTypes.bool,
+  text: PropTypes.string,
 }
 
 DevelopmentToolButton.defaultProps = {
   disabled: false,
+  text: "",
 }
 
 export default DevelopmentToolButton
