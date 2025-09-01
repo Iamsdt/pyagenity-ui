@@ -235,6 +235,77 @@
         "security": [{ "HTTPBearer": [] }]
       }
     },
+    "/v1/graph:stateSchema": {
+      "get": {
+        "tags": ["Graph"],
+        "summary": "Invoke graph execution",
+        "description": "Execute the graph with the provided input and return the final result",
+        "operationId": "state_schema_v1_graph_stateSchema_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_GraphSchema_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "HTTPBearer": [] }]
+      }
+    },
     "/v1/threads/{thread_id}/state": {
       "get": {
         "tags": ["checkpointer"],
@@ -337,7 +408,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PutStateSchema" }
+              "schema": { "$ref": "#/components/schemas/StateSchema" }
             }
           }
         },
@@ -802,7 +873,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ConfigInputSchema" }
+              "schema": { "$ref": "#/components/schemas/ConfigSchema" }
             }
           }
         },
@@ -972,7 +1043,7 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ConfigInputSchema" }
+              "schema": { "$ref": "#/components/schemas/ConfigSchema" }
             }
           }
         },
@@ -1139,56 +1210,93 @@
           }
         }
       }
+    },
+    "/v1/ping": {
+      "get": {
+        "tags": ["Ping"],
+        "summary": "Ping the server",
+        "description": "Check the server's health",
+        "operationId": "ping_server_v1_ping_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerSuccessSchemas_str_"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError400Schemas"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError404Schemas"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError401Schemas"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError403Schemas"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/_SwaggerError426Schemas"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
-      "AgentState-Input": {
-        "properties": {
-          "context": {
-            "items": { "$ref": "#/components/schemas/Message" },
-            "type": "array",
-            "title": "Context"
-          },
-          "context_summary": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Context Summary"
-          },
-          "execution_meta": { "$ref": "#/components/schemas/ExecutionState" }
-        },
-        "type": "object",
-        "title": "AgentState",
-        "description": "Common state schema that includes messages, context and internal execution metadata.\n\nThis class can be subclassed to add application-specific fields while maintaining\ncompatibility with the PyAgenity framework. All internal execution metadata\nis preserved through subclassing.\n\nNotes:\n- `execution_meta` contains internal-only execution progress and interrupt info.\n- Users may subclass `AgentState` to add application fields; internal exec meta remains\n  available to the runtime and will be persisted with the state.\n- When subclassing, add your fields but keep the core fields intact.\n\nExample:\n    class MyCustomState(AgentState):\n        user_data: dict = Field(default_factory=dict)\n        custom_field: str = \"default\""
-      },
-      "AgentState-Output": {
-        "properties": {
-          "context": {
-            "items": { "$ref": "#/components/schemas/Message" },
-            "type": "array",
-            "title": "Context"
-          },
-          "context_summary": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Context Summary"
-          },
-          "execution_meta": { "$ref": "#/components/schemas/ExecutionState" }
-        },
-        "type": "object",
-        "title": "AgentState",
-        "description": "Common state schema that includes messages, context and internal execution metadata.\n\nThis class can be subclassed to add application-specific fields while maintaining\ncompatibility with the PyAgenity framework. All internal execution metadata\nis preserved through subclassing.\n\nNotes:\n- `execution_meta` contains internal-only execution progress and interrupt info.\n- Users may subclass `AgentState` to add application fields; internal exec meta remains\n  available to the runtime and will be persisted with the state.\n- When subclassing, add your fields but keep the core fields intact.\n\nExample:\n    class MyCustomState(AgentState):\n        user_data: dict = Field(default_factory=dict)\n        custom_field: str = \"default\""
-      },
-      "ConfigInputSchema": {
+      "ConfigSchema": {
         "properties": {
           "config": {
-            "additionalProperties": true,
-            "type": "object",
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
             "title": "Config",
             "description": "Configuration for the state"
           }
         },
         "type": "object",
-        "required": ["config"],
-        "title": "ConfigInputSchema",
+        "title": "ConfigSchema",
         "description": "Schema for state data."
       },
       "EdgeSchema": {
@@ -1242,56 +1350,6 @@
         "type": "object",
         "required": ["loc", "msg", "type"],
         "title": "ErrorSchemas"
-      },
-      "ExecutionState": {
-        "properties": {
-          "current_node": { "type": "string", "title": "Current Node" },
-          "step": { "type": "integer", "title": "Step", "default": 0 },
-          "status": {
-            "$ref": "#/components/schemas/ExecutionStatus",
-            "default": "running"
-          },
-          "interrupted_node": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Interrupted Node"
-          },
-          "interrupt_reason": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Interrupt Reason"
-          },
-          "interrupt_data": {
-            "anyOf": [
-              { "additionalProperties": true, "type": "object" },
-              { "type": "null" }
-            ],
-            "title": "Interrupt Data"
-          },
-          "thread_id": {
-            "anyOf": [{ "type": "string" }, { "type": "null" }],
-            "title": "Thread Id"
-          },
-          "internal_data": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Internal Data"
-          }
-        },
-        "type": "object",
-        "required": ["current_node"],
-        "title": "ExecutionState",
-        "description": "Tracks the internal execution state of a graph.\n\nThis class manages the execution progress, interrupt status, and internal\ndata that should not be exposed to users."
-      },
-      "ExecutionStatus": {
-        "type": "string",
-        "enum": [
-          "running",
-          "interrupted_before",
-          "interrupted_after",
-          "completed",
-          "error"
-        ],
-        "title": "ExecutionStatus",
-        "description": "Status of graph execution."
       },
       "GraphInfoSchema": {
         "properties": {
@@ -1410,9 +1468,10 @@
           },
           "state": {
             "anyOf": [
-              { "$ref": "#/components/schemas/AgentState-Output" },
+              { "additionalProperties": true, "type": "object" },
               { "type": "null" }
             ],
+            "title": "State",
             "description": "State information from the graph execution"
           },
           "context": {
@@ -1618,10 +1677,12 @@
       "PutMessagesSchema": {
         "properties": {
           "config": {
-            "additionalProperties": true,
-            "type": "object",
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
             "title": "Config",
-            "description": "Configuration for the messages"
+            "description": "Configuration for the state"
           },
           "messages": {
             "items": { "$ref": "#/components/schemas/Message" },
@@ -1639,27 +1700,9 @@
           }
         },
         "type": "object",
-        "required": ["config", "messages"],
+        "required": ["messages"],
         "title": "PutMessagesSchema",
         "description": "Schema for putting messages."
-      },
-      "PutStateSchema": {
-        "properties": {
-          "config": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "Config",
-            "description": "Configuration for the state"
-          },
-          "state": {
-            "$ref": "#/components/schemas/AgentState-Input",
-            "description": "State data"
-          }
-        },
-        "type": "object",
-        "required": ["config", "state"],
-        "title": "PutStateSchema",
-        "description": "Schema for putting state."
       },
       "ResponseGranularity": {
         "type": "string",
@@ -1693,15 +1736,38 @@
         "properties": {
           "state": {
             "anyOf": [
-              { "$ref": "#/components/schemas/AgentState-Output" },
+              { "additionalProperties": true, "type": "object" },
               { "type": "null" }
             ],
+            "title": "State",
             "description": "State data"
           }
         },
         "type": "object",
         "title": "StateResponseSchema",
         "description": "Schema for state response."
+      },
+      "StateSchema": {
+        "properties": {
+          "config": {
+            "anyOf": [
+              { "additionalProperties": true, "type": "object" },
+              { "type": "null" }
+            ],
+            "title": "Config",
+            "description": "Configuration for the state"
+          },
+          "state": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "State",
+            "description": "State data"
+          }
+        },
+        "type": "object",
+        "required": ["state"],
+        "title": "StateSchema",
+        "description": "Schema for putting state."
       },
       "ThreadResponseSchema": {
         "properties": {
@@ -1773,8 +1839,8 @@
             "title": "Metadata",
             "default": {
               "message": "Failed",
-              "request_id": "9dbd6c28199e406599382c4ae95be01e",
-              "timestamp": "2025-08-28T23:35:55.645832"
+              "request_id": "c898087dcc9446da9bbb906214e24c22",
+              "timestamp": "2025-09-01T17:50:40.171278"
             }
           },
           "error": {
@@ -1797,8 +1863,8 @@
             "title": "Metadata",
             "default": {
               "message": "Failed",
-              "request_id": "2ddf05af5f654282b1cce71eeb043e1a",
-              "timestamp": "2025-08-28T23:35:55.646412"
+              "request_id": "0b2bffc3e31d45f0acb2a87664dbabb8",
+              "timestamp": "2025-09-01T17:50:40.171862"
             }
           },
           "error": {
@@ -1821,8 +1887,8 @@
             "title": "Metadata",
             "default": {
               "message": "Failed",
-              "request_id": "b7b9c548fcd14e7797c424919b8111d5",
-              "timestamp": "2025-08-28T23:35:55.646690"
+              "request_id": "31f747ec79b144d69c6b647c4657bae1",
+              "timestamp": "2025-09-01T17:50:40.172129"
             }
           },
           "error": {
@@ -1845,8 +1911,8 @@
             "title": "Metadata",
             "default": {
               "message": "Failed",
-              "request_id": "5c7c24a3adb948e39a1bf17136b3d164",
-              "timestamp": "2025-08-28T23:35:55.646121"
+              "request_id": "93ce51ef88594c0da2bcd549dea6be61",
+              "timestamp": "2025-09-01T17:50:40.171581"
             }
           },
           "error": {
@@ -1869,8 +1935,8 @@
             "title": "Metadata",
             "default": {
               "message": "Failed",
-              "request_id": "ff97cba369a44bb8b203e126f9a2a2b9",
-              "timestamp": "2025-08-28T23:35:55.647099"
+              "request_id": "322bec6a522448678ea9adf891dc2cf4",
+              "timestamp": "2025-09-01T17:50:40.172409"
             }
           },
           "error": {
@@ -1900,8 +1966,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -1918,8 +1984,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -1936,8 +2002,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -1954,8 +2020,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -1972,8 +2038,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -1990,8 +2056,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -2008,8 +2074,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -2026,8 +2092,8 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
@@ -2044,14 +2110,32 @@
             "title": "Metadata",
             "default": {
               "message": "Success",
-              "request_id": "dae1c6c3b3a244079eba3597be70c35e",
-              "timestamp": "2025-08-28T23:35:55.645227"
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
             }
           }
         },
         "type": "object",
         "required": ["data"],
         "title": "_SwaggerSuccessSchemas[ThreadsListResponseSchema]"
+      },
+      "_SwaggerSuccessSchemas_str_": {
+        "properties": {
+          "data": { "type": "string", "title": "Data" },
+          "metadata": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Metadata",
+            "default": {
+              "message": "Success",
+              "request_id": "a5110bdd2d3c4dcf8084097ea4929394",
+              "timestamp": "2025-09-01T17:50:40.170642"
+            }
+          }
+        },
+        "type": "object",
+        "required": ["data"],
+        "title": "_SwaggerSuccessSchemas[str]"
       }
     },
     "securitySchemes": { "HTTPBearer": { "type": "http", "scheme": "bearer" } }
