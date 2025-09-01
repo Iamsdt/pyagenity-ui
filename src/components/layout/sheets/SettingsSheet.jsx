@@ -11,6 +11,7 @@ import VerificationStepper from "@/components/setup/VerificationStepper"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Sheet,
   SheetContent,
@@ -20,17 +21,13 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { useToast } from "@/components/ui/use-toast"
-import ct from "@constants"
 import {
-  saveAndVerifySettings,
-  setPingStepResult,
-  setGraphStepResult,
   resetVerification,
   setSettings,
   testPingEndpoint,
   testGraphEndpoint,
 } from "@/services/store/slices/settings.slice"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import ct from "@constants"
 
 // Zod validation schema
 const settingsSchema = z.object({
@@ -94,20 +91,10 @@ const useSettingsForm = (isOpen, onClose) => {
     dispatch(setSettings(data))
 
     // Dispatch ping endpoint test
-    dispatch(
-      testPingEndpoint({
-        backendUrl: data.backendUrl,
-        authToken: data.authToken,
-      })
-    )
+    dispatch(testPingEndpoint())
 
     // Dispatch graph endpoint test
-    dispatch(
-      testGraphEndpoint({
-        backendUrl: data.backendUrl,
-        authToken: data.authToken,
-      })
-    )
+    dispatch(testGraphEndpoint())
   }
 
   const handleCancel = () => {

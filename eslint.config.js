@@ -31,12 +31,12 @@ export default [
     },
   },
   {
-    rules: {
-      "no-console": ["error", { allow: ["warn", "error", "log"] }],
-    },
-    globals: {
-      console: "readonly",
-      window: "readonly",
+    languageOptions: {
+      globals: {
+        console: "readonly",
+        window: "readonly",
+        localStorage: "readonly",
+      },
     },
   },
 ]

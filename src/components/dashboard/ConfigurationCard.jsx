@@ -10,12 +10,13 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import ct from "@constants"
 import {
   setSettings,
   testPingEndpoint,
   testGraphEndpoint,
 } from "@store/slices/settings.slice"
-import ct from "@constants"
+
 import { toast } from "../ui/use-toast"
 
 // Zod validation schema
@@ -37,6 +38,7 @@ const settingsSchema = z.object({
  * @param {Function} props.onStartChat - Callback when Start Chat is clicked
  * @returns {object} Card component with configuration form
  */
+// eslint-disable-next-line max-lines-per-function
 const ConfigurationCard = ({ onStartChat = null }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -56,22 +58,13 @@ const ConfigurationCard = ({ onStartChat = null }) => {
   })
 
   const handleFormSubmit = (data) => {
-    console.log("#SDT Form Data:", data)
+    console.warn("#SDT Handle Form Submit called with data:", data)
     dispatch(setSettings(data))
-    // first dispatch ping
-    dispatch(
-      testPingEndpoint({
-        backendUrl: data.backendUrl,
-        authToken: data.authToken,
-      })
-    )
+    console.warn("#SDT setSettings dispatched")
+    dispatch(testPingEndpoint())
+    console.warn("#SDT testPingEndpoint dispatched")
     // second dispatch graph
-    dispatch(
-      testGraphEndpoint({
-        backendUrl: data.backendUrl,
-        authToken: data.authToken,
-      })
-    )
+    dispatch(testGraphEndpoint())
     // here
     if (onStartChat) {
       onStartChat(data)

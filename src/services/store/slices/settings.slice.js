@@ -6,11 +6,13 @@ import ct from "@constants/"
 // Async thunks for API testing
 export const testPingEndpoint = createAsyncThunk(
   "settings/testPingEndpoint",
-  async ({ backendUrl, authToken }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const result = await pingBackend(backendUrl, authToken)
+      const result = await pingBackend()
+      console.log("#SDT Ping Result:", result)
       return result
     } catch (error) {
+      console.error("#SDT Ping error:", error.message)
       return rejectWithValue(error.message)
     }
   }
@@ -18,9 +20,10 @@ export const testPingEndpoint = createAsyncThunk(
 
 export const testGraphEndpoint = createAsyncThunk(
   "settings/testGraphEndpoint",
-  async ({ backendUrl, authToken }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const result = await fetchGraphData(backendUrl, authToken)
+      const result = await fetchGraphData()
+      console.log("#SDT Graph Result:", result)
       return result
     } catch (error) {
       return rejectWithValue(error.message)
@@ -59,6 +62,9 @@ const settingsSlice = createSlice({
       state.backendUrl = backendUrl || ""
       state.authToken = authToken || ""
       state.isBackendConfigured = false
+      // save to local storage
+      localStorage.setItem("backendUrl", state.backendUrl)
+      localStorage.setItem("authToken", state.authToken)
     },
     clearSettings: (state) => {
       state.name = ""
