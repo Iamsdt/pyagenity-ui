@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-import { pingBackend, fetchGraphData } from "@api/setupIntegration.api"
+import { fetchStateSchema } from "@api/state.api"
 import ct from "@constants/"
 
 // list of messages
@@ -11,7 +11,7 @@ const initialState = {
   error: null,
   state: {
     context: [],
-    contextSummary: "",
+    context_summary: "",
     execution_meta: {
       current_node: "",
       step: 0,
@@ -27,9 +27,9 @@ const initialState = {
 
 export const fetchStateScheme = createAsyncThunk(
   "state/fetchStateScheme",
-  async ({ backendUrl, authToken }, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const result = await pingBackend(backendUrl, authToken)
+      const result = await fetchStateSchema()
       return result
     } catch (error) {
       return rejectWithValue(error.message)
@@ -46,6 +46,9 @@ const stateSlice = createSlice({
       state.context = context || state.context
       state.contextSummary = contextSummary || state.contextSummary
       state.execution_meta = execution_meta || state.execution_meta
+    },
+    updateFullState: (state, action) => {
+      state.state = { ...state.state, ...action.payload }
     },
     clearSettings: (state) => {
       state.context = []
@@ -66,7 +69,17 @@ const stateSlice = createSlice({
       })
       .addCase(fetchStateScheme.fulfilled, (state, action) => {
         // this api will return current state schema, which we can use to update our state
-        state.state = action.payload
+        // state.state = action.payload
+        const { data } = action.payload.data
+        // get properties from data properties
+        const properties = data.properties || {}
+        // check except context, context_summary and execution_meta
+        // what are available add those in the state
+        Object.keys(properties).forEach((key) => {
+          if (!["context", "context_summary", "execution_meta"].includes(key)) {
+            state[key] = properties[key]
+          }
+        })
         state.isLoading = false
       })
       .addCase(fetchStateScheme.rejected, (state, action) => {
@@ -75,3 +88,6 @@ const stateSlice = createSlice({
       })
   },
 })
+
+export const { updateState, updateFullState, clearSettings, addNewMessage } = stateSlice.actions
+export default stateSlice.reducer
