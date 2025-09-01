@@ -153,7 +153,7 @@ const ThreadSettingsSheet = ({ isOpen, onClose, threadId, threadData }) => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Statistics (Readonly)</Label>
+                <Label>Statistics </Label>
                 <div className="text-sm text-slate-600 dark:text-slate-400 space-y-1">
                   <p>Total Token: {threadSettings.total_token}</p>
                   <p>Total Tool Calls: {threadSettings.total_tool_calls}</p>
