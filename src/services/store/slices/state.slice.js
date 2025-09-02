@@ -89,5 +89,6 @@ const stateSlice = createSlice({
   },
 })
 
-export const { updateState, updateFullState, clearSettings, addNewMessage } = stateSlice.actions
+export const { updateState, updateFullState, clearSettings, addNewMessage } =
+  stateSlice.actions
 export default stateSlice.reducer
