@@ -15,6 +15,7 @@ import {
   setSettings,
   testPingEndpoint,
   testGraphEndpoint,
+  callListThreadsEndpoint,
 } from "@store/slices/settings.slice"
 
 import { toast } from "../ui/use-toast"
@@ -65,6 +66,8 @@ const ConfigurationCard = ({ onStartChat = null }) => {
     console.warn("#SDT testPingEndpoint dispatched")
     // second dispatch graph
     dispatch(testGraphEndpoint())
+    console.warn("#SDT callListThreadsEndpoint dispatched")
+    dispatch(callListThreadsEndpoint())
     // here
     if (onStartChat) {
       onStartChat(data)

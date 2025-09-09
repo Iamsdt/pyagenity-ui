@@ -15,6 +15,7 @@ import {
 import PropTypes from "prop-types"
 import { useState, useRef, useEffect, useCallback } from "react"
 import { useDispatch } from "react-redux"
+import { sendMessage } from "@/services/store/slices/chat.slice"
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter"
 import {
@@ -39,7 +40,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
-import { addMessage } from "@/services/store/slices/chat.slice"
+ 
 
 /**
  * Message component renders individual chat messages with modern design
@@ -610,65 +611,17 @@ const MessageView = ({ thread }) => {
   const handleSendMessage = useCallback(
     async (content) => {
       if (!content.trim()) return
-
-      // Add user message
-      dispatch(
-        addMessage({
-          threadId: thread.id,
-          message: { content, role: "user" },
-        })
-      )
-
-      // Start AI response simulation
+      // Show typing while dispatching async thunk
       setIsTyping(true)
       setIsGenerating(true)
-
-      // Simulate AI processing time
-      setTimeout(() => {
-        if (isGenerating) {
-          dispatch(
-            addMessage({
-              threadId: thread.id,
-              message: {
-                content: `Here's a **markdown response** with some examples:
-
-## Code Examples
-
-Here's a JSON example:
-\`\`\`json
-{
-  "name": "PyAgenity",
-  "version": "1.0.0",
-  "features": ["AI Chat", "File Upload", "Markdown Support"]
-}
-\`\`\`
-
-And a JavaScript function:
-\`\`\`javascript
-function greetUser(name) {
-  return \`Hello, \${name}! Welcome to PyAgenity.\`;
-}
-\`\`\`
-
-### Features List
-- **Bold text** and *italic text*
-- Code blocks with syntax highlighting
-- Tables and lists
-- \`inline code\` support
-
-> This is a blockquote showing how markdown rendering works seamlessly with our chat interface.
-
-I can help you with various tasks and answer your questions!`,
-                role: "assistant",
-              },
-            })
-          )
-          setIsTyping(false)
-          setIsGenerating(false)
-        }
-      }, 2000)
+      try {
+        await dispatch(sendMessage({ content, threadId: thread.id }))
+      } finally {
+        setIsTyping(false)
+        setIsGenerating(false)
+      }
     },
-    [dispatch, thread.id, isGenerating]
+    [dispatch, thread.id]
   )
 
   const handleStopGeneration = useCallback(() => {

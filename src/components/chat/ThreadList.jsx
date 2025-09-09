@@ -1,4 +1,4 @@
-import { MessageSquarePlus, MoreHorizontal, Trash2 } from "lucide-react"
+import { MessageSquarePlus, MoreHorizontal, RefreshCw, Trash2 } from "lucide-react"
 import PropTypes from "prop-types"
 import { useMemo } from "react"
 import { useDispatch, useSelector } from "react-redux"
@@ -18,7 +18,11 @@ import {
   deleteThread,
   setActiveThread,
 } from "@/services/store/slices/chat.slice"
+import { callGetMessagesEndpoint, callListThreadsEndpoint } from "@/services/store/slices/settings.slice"
 import ct from "@constants/"
+import { fetchThread } from "@/services/store/slices/chat.slice"
+import { callDeleteThreadEndpoint } from "@/services/store/slices/chat.slice"
+
 import {
   Tooltip,
   TooltipContent,
@@ -96,6 +100,8 @@ const ThreadList = ({ className }) => {
   const { threads, activeThreadId } = useSelector(
     (state) => state[ct.store.CHAT_STORE]
   )
+  console.log("Threads in store:", threads)
+
 
   const storeSettings = useSelector((state) => state[ct.store.SETTINGS_STORE])
 
@@ -111,14 +117,20 @@ const ThreadList = ({ className }) => {
     navigate(`/chat/${newThread.payload.id || Date.now().toString()}`)
   }
 
+  const handleRefreshThreads = () => {
+    dispatch(callListThreadsEndpoint())
+  }
+
   const handleSelectThread = (id) => {
     dispatch(setActiveThread(id))
+    dispatch(callGetMessagesEndpoint(id))
+    dispatch(fetchThread(id))
     navigate(`/chat/${id}`)
   }
 
   const handleDeleteThread = (id, event) => {
     event.stopPropagation()
-    dispatch(deleteThread(id))
+    dispatch(callDeleteThreadEndpoint(id))
 
     // Navigate to chat root if deleting current thread
     if (threadId === id || activeThreadId === id) {
@@ -139,16 +151,28 @@ const ThreadList = ({ className }) => {
         <h2 className="text-lg font-semibold ml-2" onClick={navigateToChat}>
           Chats
         </h2>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={storeSettings.verification.isVerified ? handleNewChat : null}
-          disabled={!storeSettings.verification.isVerified}
-          className="h-8 w-8"
-          aria-label="New chat"
-        >
-          <MessageSquarePlus className="h-4 w-4" />
-        </Button>
+        <span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={storeSettings.verification.isVerified ? handleRefreshThreads : null}
+            disabled={!storeSettings.verification.isVerified}
+            className="h-8 w-8"
+            aria-label="Refresh"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={storeSettings.verification.isVerified ? handleNewChat : null}
+            disabled={!storeSettings.verification.isVerified}
+            className="h-8 w-8"
+            aria-label="New chat"
+          >
+            <MessageSquarePlus className="h-4 w-4" />
+          </Button>
+        </span>
       </div>
 
       <ScrollArea className="flex-1 min-h-0">

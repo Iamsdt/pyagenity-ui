@@ -28,6 +28,7 @@ const ChatContent = () => {
 
   const handleSendMessage = useCallback(
     (message) => {
+      console.log("message", message)
       // If no active thread, create a new one
       if (!activeThread) {
         const newThread = dispatch(
@@ -70,7 +71,9 @@ const ChatContent = () => {
   return (
     <div className="flex flex-col h-full">
       {activeThread ? (
+      <>
         <MessageView thread={activeThread} />
+      </>
       ) : (
         <EmptyChatView
           onNewChat={handleNewChat}

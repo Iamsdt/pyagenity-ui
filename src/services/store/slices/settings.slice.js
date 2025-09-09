@@ -2,6 +2,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 import { pingBackend, fetchGraphData } from "@api/setupIntegration.api"
 import ct from "@constants/"
+import { listThreads } from "@api/thread.api"
+import { listMessages } from "@/services/api/message.api"
 
 // Async thunks for API testing
 export const testPingEndpoint = createAsyncThunk(
@@ -17,13 +19,39 @@ export const testPingEndpoint = createAsyncThunk(
     }
   }
 )
-
+  
 export const testGraphEndpoint = createAsyncThunk(
   "settings/testGraphEndpoint",
   async (_, { rejectWithValue }) => {
     try {
       const result = await fetchGraphData()
       console.log("#SDT Graph Result:", result)
+      return result
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const callListThreadsEndpoint = createAsyncThunk(
+  "settings/callListThreadsEndpoint",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const result = await listThreads()
+      console.log("List Threads Result:", result)
+      return result
+    } catch (error) {
+      return rejectWithValue(error.message)
+    }
+  }
+)
+
+export const callGetMessagesEndpoint = createAsyncThunk(
+  "settings/callGetMessagesEndpoint",
+  async (threadId, { getState, rejectWithValue }) => {
+    try {
+      const result = await listMessages(threadId)
+      console.log("List Messages Result:", result)
       return result
     } catch (error) {
       return rejectWithValue(error.message)
