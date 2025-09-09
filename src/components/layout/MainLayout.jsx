@@ -42,7 +42,7 @@ const MainLayout = () => {
   const { threadId } = useParams()
   const store = useSelector((st) => st[ct.store.SETTINGS_STORE])
   const chatStore = useSelector((st) => st[ct.store.CHAT_STORE])
-
+  console.log("chatstore",chatStore) 
   const { isVerified } = store.verification
 
   // Check if we're on a thread page
@@ -55,6 +55,7 @@ const MainLayout = () => {
 
   const handleSheetOpen = (sheetType) => {
     setActiveSheet(sheetType)
+
   }
 
   const handleSheetClose = () => {
@@ -159,6 +160,7 @@ const MainLayout = () => {
           <ViewStateSheet
             isOpen={activeSheet === "state"}
             onClose={handleSheetClose}
+            threadId={threadId || chatStore.activeThreadId}
           />
           <ViewMemorySheet
             isOpen={activeSheet === "memory"}

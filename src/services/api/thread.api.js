@@ -26,7 +26,27 @@ export const getThread = async (thread_id) => {
  * @param {string|number} thread_id - ID of the thread to delete
  */
 export const deleteThread = async (thread_id) => {
-  return await api.delete(`/v1/threads/${thread_id}`)
+  try {
+    const response = await api.delete(`/v1/threads/${thread_id}`, {
+      // Add empty body to satisfy validation
+      data: {},
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (response.status === 204 || response.status === 200) {
+      return { success: true }
+    }
+    return response.data
+
+  } catch (error) {
+    if (error.response?.status === 422) {
+      console.error('Delete validation error:', error.response.data)
+      throw new Error(error.response.data.error?.message || 'Validation error')
+    }
+    throw error
+  }
 }
 
 export default {

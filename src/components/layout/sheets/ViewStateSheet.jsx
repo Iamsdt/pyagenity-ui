@@ -1,7 +1,7 @@
 import PropTypes from "prop-types"
 import { useState, useEffect } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import { Plus, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, ChevronDown, ChevronUp, Trash2 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -22,6 +22,9 @@ import {
 } from "@/components/ui/sheet"
 import { updateFullState } from "@/services/store/slices/state.slice"
 import ct from "@constants/"
+import { fetchState, putState, deleteState } from "@/services/api/state.api"
+import { useToast } from "@/components/ui/use-toast"
+
 
 /**
  * Helper component for managing array fields
@@ -165,7 +168,8 @@ const useFormData = (stateData) => {
 
   useEffect(() => {
     if (stateData) {
-      setFormData((previousData) => ({ ...previousData, ...stateData }))
+      const normalized = stateData?.data?.state ?? stateData?.state ?? stateData
+      setFormData((previousData) => ({ ...previousData, ...normalized }))
     }
   }, [stateData])
 
@@ -245,8 +249,28 @@ const useFormData = (stateData) => {
  * @returns {object} Sheet component displaying application state
  */
 // eslint-disable-next-line max-lines-per-function, complexity
-const ViewStateSheet = ({ isOpen, onClose }) => {
+const ViewStateSheet = ({ isOpen, onClose, threadId }) => {
   const dispatch = useDispatch()
+  const { toast } = useToast()
+  const [isDeleting, setIsDeleting] = useState(false)
+  
+  // Fetch state when the sheet opens and a threadId is available
+  useEffect(() => {
+    if (!isOpen || !threadId) return
+    
+    const run = async () => {
+      try {
+        console.log("📌 Fetching state for thread:", threadId)
+        const res = await fetchState(threadId)
+        console.log("✅ API response:", res.data)
+        const statePayload = res?.data?.data?.state ?? res?.data?.state ?? res?.data
+        dispatch(updateFullState(statePayload))
+      } catch (err) {
+        console.error("❌ Failed to fetch state:", err)
+      }
+    }
+    run()
+  }, [isOpen, threadId, dispatch])
   const stateData = useSelector((state) => state[ct.store.STATE_STORE].state)
   const [isContextOpen, setIsContextOpen] = useState(true)
   const [isExecutionMetaOpen, setIsExecutionMetaOpen] = useState(true)
@@ -264,9 +288,48 @@ const ViewStateSheet = ({ isOpen, onClose }) => {
     dispatch(updateFullState(formData))
   }
 
-  const handleSync = () => {
-    console.warn("Syncing state...")
-    // Dummy implementation
+  const handleSync = async () => {
+    try {
+      const idToPut = threadId || formData.execution_meta?.thread_id
+      if (!idToPut) {
+        console.warn("No thread ID available to sync state")
+        return
+      }
+  
+      // Wrap formData in 'state' field as backend expects
+      const requestBody = { state: formData }
+      
+      // PUT current formData to backend
+      const response = await putState(idToPut, requestBody)
+      const updatedState = response?.data?.data?.state ?? response?.data?.state ?? response?.data
+
+      // Update redux with backend-confirmed state (only the state)
+      dispatch(updateFullState(updatedState))
+  
+      console.log("PUT state for thread:", idToPut, updatedState)
+    } catch (error) {
+      console.error("Failed to put state:", error)
+    }
+  }
+
+  const handleDeleteState = async () => {
+    try {
+      setIsDeleting(true)
+      await deleteState(threadId)
+      toast({
+        title: "Success",
+        description: "Thread state deleted successfully"
+      })
+    } catch (error) {
+      console.error("Delete state error:", error)
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete thread state"
+      })
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   const handleContextUpdate = (messageIndex, newMessage) => {
@@ -282,7 +345,16 @@ const ViewStateSheet = ({ isOpen, onClose }) => {
   }
 
   const dynamicFields = Object.keys(formData).filter(
-    (key) => !["context", "context_summary", "execution_meta"].includes(key)
+    (key) =>
+      ![
+        "context",
+        "context_summary",
+        "execution_meta",
+        // exclude API envelope keys if present
+        "data",
+        "metadata",
+        "state",
+      ].includes(key)
   )
 
   return (
@@ -293,12 +365,15 @@ const ViewStateSheet = ({ isOpen, onClose }) => {
           <SheetDescription>
             View and edit the current application state
           </SheetDescription>
+          <div className="flex gap-2 pt-2">
+            <Button onClick={handleSync}>
+              Sync State
+            </Button>
+          </div>
         </SheetHeader>
 
         <div className="mt-6">
           <div className="flex justify-between items-center mb-4">
-            <Button onClick={handleSync}>Sync State</Button>
-            <Button onClick={handleSave}>Save All Changes</Button>
           </div>
 
           <ScrollArea className="h-[calc(100vh-200px)]">
@@ -563,6 +638,7 @@ const ViewStateSheet = ({ isOpen, onClose }) => {
 ViewStateSheet.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
+  threadId: PropTypes.string,
 }
 
 export default ViewStateSheet
