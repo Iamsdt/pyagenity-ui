@@ -122,6 +122,13 @@ Add project-specific config in `.env` (if used). Vite supports `.env`, `.env.dev
 2. Create a feature branch
 3. Open a pull request with a clear description
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the checks that run on every pull request.
+
+## 📄 License
+
+Agentflow is [MIT licensed](LICENSE) and made by [10xScale](https://10xscale.ai). Contributions
+are accepted under the same license.
+
 ---
 
 > This README was updated to match the current project structure and npm scripts.
